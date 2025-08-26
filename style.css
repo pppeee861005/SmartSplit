@@ -1,0 +1,188 @@
+/* 自定義動畫和樣式 */
+
+/* 淡入動畫 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 滑入動畫 */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 彈跳動畫 */
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0,0,0);
+    }
+    40%, 43% {
+        transform: translate3d(0, -10px, 0);
+    }
+    70% {
+        transform: translate3d(0, -5px, 0);
+    }
+    90% {
+        transform: translate3d(0, -2px, 0);
+    }
+}
+
+/* 應用動畫到元素 */
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+.bounce-in {
+    animation: bounce 0.6s ease-out;
+}
+
+/* 參與者卡片樣式 */
+.participant-card {
+    transition: all 0.2s ease;
+}
+
+.participant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 支出項目樣式 */
+.expense-item {
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.expense-item:hover {
+    border-left-color: hsl(var(--p));
+    background-color: hsl(var(--b2));
+}
+
+/* 餘額狀態顏色 */
+.balance-positive {
+    color: hsl(var(--su));
+}
+
+.balance-negative {
+    color: hsl(var(--er));
+}
+
+.balance-zero {
+    color: hsl(var(--in));
+}
+
+/* 轉帳建議樣式 */
+.transfer-suggestion {
+    background: linear-gradient(135deg, hsl(var(--p)) 0%, hsl(var(--s)) 100%);
+    color: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 響應式調整 */
+@media (max-width: 480px) {
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .stats-vertical .stat {
+        padding: 1rem;
+    }
+}
+
+/* Toast 樣式 */
+.toast {
+    transition: all 0.3s ease;
+}
+
+/* 輸入框焦點效果 */
+.input:focus,
+.textarea:focus,
+.select:focus {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+}
+
+/* 按鈕點擊效果 */
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* 載入動畫 */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+/* 空狀態樣式 */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    opacity: 0.6;
+}
+
+.empty-state svg {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 1rem;
+    opacity: 0.3;
+}
+
+/* 成功狀態樣式 */
+.success-state {
+    text-align: center;
+    padding: 1rem;
+    color: hsl(var(--su));
+}
+
+/* 錯誤狀態樣式 */
+.error-state {
+    text-align: center;
+    padding: 1rem;
+    color: hsl(var(--er));
+}
+
+/* 滾動條樣式 */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: hsl(var(--b2));
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(var(--bc) / 0.2);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--bc) / 0.3);
+}
