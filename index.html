@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能分帳助手</title>
+    <style>
+      #versionInfo {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        font-size: 0.9rem;
+        color: #888;
+        user-select: none;
+      }
+    </style>
+</head>
+<body class="bg-base-200 min-h-screen">
+    <!-- 版本資訊 -->
+    <div id="versionInfo">版本號: 1.0.0 | 設計者: 豪力風神</div>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-base-200 min-h-screen">
+    <!-- 頂部導航 -->
+    <div class="navbar bg-primary text-primary-content sticky top-0 z-50">
+        <div class="flex-1">
+            <h1 class="text-xl font-bold">💰 智能分帳助手</h1>
+        </div>
+        <div class="flex-none">
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-ghost btn-circle">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                </label>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 text-base-content">
+                    <li><a onclick="showCurrencyModal()">💱 貨幣設定</a></li>
+                    <li><a onclick="exportResults()">📤 匯出結果</a></li>
+                    <li><a onclick="clearAllData()">🗑️ 清除資料</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-4 max-w-md">
+        <!-- 貨幣顯示 -->
+        <div class="card bg-base-100 shadow-xl mb-4">
+            <div class="card-body p-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm opacity-70">目前貨幣</span>
+                    <div class="badge badge-primary" id="currentCurrency">TWD</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 參與者管理 -->
+        <div class="card bg-base-100 shadow-xl mb-4">
+            <div class="card-body">
+                <h2 class="card-title text-lg">👥 參與者 (<span id="participantCount">0</span>/5)</h2>
+                
+                <div class="form-control">
+                    <div class="input-group">
+                        <input type="text" id="participantName" placeholder="輸入姓名" class="input input-bordered flex-1" maxlength="10">
+                        <button class="btn btn-primary" onclick="addParticipant()">新增</button>
+                    </div>
+                </div>
+
+                <div id="participantsList" class="space-y-2 mt-4">
+                    <!-- 參與者列表將在這裡動態生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 支出管理 -->
+        <div class="card bg-base-100 shadow-xl mb-4">
+            <div class="card-body">
+                <h2 class="card-title text-lg">💸 支出記錄</h2>
+                
+                <div class="space-y-3">
+                    <div class="form-control">
+                        <input type="text" id="expenseDescription" placeholder="支出描述" class="input input-bordered" maxlength="20">
+                    </div>
+                    
+                    <div class="form-control">
+                        <input type="number" id="expenseAmount" placeholder="金額" class="input input-bordered" min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-control">
+                        <select id="expensePayer" class="select select-bordered">
+                            <option value="">選擇付款人</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-control">
+                        <textarea id="expenseNote" placeholder="備註（選填）" class="textarea textarea-bordered h-20" maxlength="50"></textarea>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-block" onclick="addExpense()">新增支出</button>
+                </div>
+
+                <div id="expensesList" class="space-y-2 mt-4">
+                    <!-- 支出列表將在這裡動態生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 計算結果 -->
+        <div class="card bg-base-100 shadow-xl mb-4" id="resultsCard" style="display: none;">
+            <div class="card-body">
+                <h2 class="card-title text-lg">📊 分帳結果</h2>
+                
+                <div class="stats stats-vertical shadow">
+                    <div class="stat">
+                        <div class="stat-title">總支出</div>
+                        <div class="stat-value text-primary" id="totalExpense">$0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">每人應付</div>
+                        <div class="stat-value text-secondary" id="perPersonAmount">$0</div>
+                    </div>
+                </div>
+
+                <div id="balancesList" class="space-y-2 mt-4">
+                    <!-- 餘額列表將在這裡動態生成 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 轉帳建議 -->
+        <div class="card bg-base-100 shadow-xl mb-4" id="transferCard" style="display: none;">
+            <div class="card-body">
+                <h2 class="card-title text-lg">💳 轉帳建議</h2>
+                <div id="transfersList" class="space-y-2">
+                    <!-- 轉帳建議將在這裡動態生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 貨幣選擇模態框 -->
+    <dialog id="currencyModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">選擇貨幣</h3>
+            <div class="py-4">
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">新台幣 (TWD)</span>
+                        <input type="radio" name="currency" value="TWD" class="radio checked:bg-primary" checked>
+                    </label>
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">美元 (USD)</span>
+                        <input type="radio" name="currency" value="USD" class="radio checked:bg-primary">
+                    </label>
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">日圓 (JPY)</span>
+                        <input type="radio" name="currency" value="JPY" class="radio checked:bg-primary">
+                    </label>
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">港幣 (HKD)</span>
+                        <input type="radio" name="currency" value="HKD" class="radio checked:bg-primary">
+                    </label>
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer">
+                        <span class="label-text">人民幣 (CNY)</span>
+                        <input type="radio" name="currency" value="CNY" class="radio checked:bg-primary">
+                    </label>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button class="btn btn-primary" onclick="setCurrency()">確認</button>
+                <button class="btn" onclick="closeCurrencyModal()">取消</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- Toast 通知 -->
+    <div class="toast toast-top toast-center z-50" id="toast" style="display: none;">
+        <div class="alert alert-success">
+            <span id="toastMessage">操作成功</span>
+        </div>
+    </div>
+
+    <script type="module" src="js/script.js"></script>
+</body>
+</html>
